@@ -174,7 +174,7 @@ void perspectiveViewport( int width, int height ) {
 	glScissor(0, 0, width, height);
 
 	gluPerspective (60, (GLfloat)width / (GLfloat)height, 1, 10000.0);
-	//glOrtho(-65, 65, -35, 35, 5, 500);    					
+	//glOrtho(-65, 65, -35, 35, 5, 500);
 
 	glMatrixMode(GL_MODELVIEW);
 
@@ -237,7 +237,9 @@ void reshape(int w, int h) {
 void display () {
 
 	static int draws=0;
-	static int displayController=0; // POG to reduce display rate and priorize variables updating
+
+	// POG to reduce display rate and priorize variables updating
+	static int displayController=0;
 
 	game.updateState();
 
@@ -313,7 +315,7 @@ void initLights () {
 	glLightf(GL_LIGHT5, GL_CONSTANT_ATTENUATION, 0.001);
 	glLightf(GL_LIGHT5, GL_LINEAR_ATTENUATION, 0.005);
 	glLightf(GL_LIGHT5, GL_SPOT_CUTOFF, 90);
-	glLightf(GL_LIGHT5, GL_SPOT_EXPONENT, 15.0);	
+	glLightf(GL_LIGHT5, GL_SPOT_EXPONENT, 15.0);
 
 	// directional light
 	GLfloat dirColor[] = {0.5, 0.5, 0.5, 1.0f};
@@ -391,8 +393,10 @@ void initGL()
 	glClearColor(0, 0, 0, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glEnable(GL_NORMALIZE);		//normalizes all normals
-	glEnable(GL_TEXTURE_2D);	
+	//normalizes all normals
+	glEnable(GL_NORMALIZE);
+
+	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_LIGHTING);
 	glShadeModel (GL_SMOOTH);
@@ -400,9 +404,9 @@ void initGL()
 
 
 	initLights();
-	glEnable (GL_LIGHT0); 	// sun
-	glEnable (GL_LIGHT1);   // spotlight
-	//glEnable (GL_LIGHT2); 	// directional
+	glEnable (GL_LIGHT0); // sun
+	glEnable (GL_LIGHT1); // spotlight
+	//glEnable (GL_LIGHT2); // directional
 	glEnable (GL_LIGHT3); // extra spotlight1
 	glEnable (GL_LIGHT4); // extra spotlight2
 	glEnable (GL_LIGHT5); // extra spotlight3
@@ -478,8 +482,10 @@ void specialFunc(int key, int x, int y)
 {
 	/*if( key == GLUT_KEY_F11 ) {
 	  static bool fullscreen = false;
-	  if( !fullscreen ) glutEnterGameMode();
-	  else 			  glutLeaveGameMode();
+	  if( !fullscreen )
+		glutEnterGameMode();
+	  else
+		glutLeaveGameMode();
 	  fullscreen = !fullscreen;
 	  }*/
 
@@ -542,9 +548,9 @@ void mouseMotionFunc(int x, int y) {
 	if( left_click == GLUT_DOWN && right_click == GLUT_DOWN )
 		game.level->camera->action2(0,(y-yold)/sf);
 	else if ( left_click == GLUT_DOWN ) {
-		game.level->stick.rotate( (x-xold)/sf );	
+		game.level->stick.rotate( (x-xold)/sf );
 		if( game.level->camera->getMode() == 1 )
-			game.level->camera->action1( (x-xold)/sf,0);				
+			game.level->camera->action1( (x-xold)/sf,0);
 	}
 	else if ( right_click == GLUT_DOWN ) {
 		if( game.hasControl ) {
@@ -570,11 +576,11 @@ void mouseMotionFunc(int x, int y) {
 		else {
 			if( game.level->camera->getMode() == 1 )
 			{
-				game.level->camera->action1( (x-xold)/sf, (y-yold)/sf);	
-				game.level->stick.rotate( (x-xold)/sf );	
+				game.level->camera->action1( (x-xold)/sf, (y-yold)/sf);
+				game.level->stick.rotate( (x-xold)/sf );
 			}
 			else
-				game.level->camera->action1( (x-xold)/sf, (y-yold)/sf);	
+				game.level->camera->action1( (x-xold)/sf, (y-yold)/sf);
 
 		}
 
@@ -648,7 +654,10 @@ int main (int argc, char **argv) {
 	}
 	else {
 		glutInitWindowSize (1280, 720);
-		glutInitWindowPosition (0, 100);              					 //set the position of the window
+
+		//set the position of the window
+		glutInitWindowPosition (0, 100);
+
 		glutCreateWindow ("SiNoS := SiNoS is Not Sinuca");
 	}
 
@@ -672,3 +681,4 @@ int main (int argc, char **argv) {
 
 	return 0;
 } 
+
