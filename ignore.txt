@@ -1,7 +1,0 @@
-opengl
-sinos
-*.o
-*_local.*
-*.win
-*.exe
-*.layout
