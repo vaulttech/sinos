@@ -42,7 +42,7 @@ typedef struct
 	GLuint		Bpp;									// Bits Per Pixel
 } TGA;
 
-bool LoadTGA(Texture * texture, char * filename);
-bool LoadCompressedTGA(Texture * texture, char * filename, FILE * fTGA);
-bool LoadUncompressedTGA(Texture * texture, char * filename, FILE * fTGA);
+bool LoadTGA(Texture * texture, const char * filename);
+bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA);
+bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA);
 //#endif

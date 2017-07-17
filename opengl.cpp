@@ -50,7 +50,7 @@ int width, height;
 static Texture tigerTex, woodTex, tableTex, rockTex, starsTex, ballTex[N_BALL_TEX], stickTex;
 
 // Objects
-map<const char*, Object*> objects;
+map<int, Object*> objects;
 
 // Mother class
 Game game;
@@ -63,14 +63,28 @@ Game game;
 
 void initObjects ()
 {
+	cout << "obj/pooltable_middle.obj" << endl;
 	static ObjectModel tableMiddle("obj/pooltable_middle.obj");
+
+	cout << "obj/pooltable_bottom.obj" << endl;
 	static ObjectModel tableBottom("obj/pooltable_bottom.obj");
+
+	cout << "obj/pooltable_table.obj" << endl;
 	static ObjectModel tableTop("obj/pooltable_table.obj");
+
+	cout << "obj/pooltable_frame.obj" << endl;
 	static ObjectModel tableFrame("obj/pooltable_frame.obj");
+
+	cout << "obj/pooltable_bound.obj" << endl;
 	static ObjectModel tableFrameBound("obj/pooltable_frame_bound.obj");
+
 	glmFacetNormals(tableFrameBound.getModelPointer());
 	glmVertexNormals(tableFrameBound.getModelPointer(), -90.0);
+
+	cout << "obj/crypt.obj" << endl;
 	static ObjectModel scenario("obj/crypt.obj");
+
+	cout << "obj/globe.obj" << endl;
 	static ObjectModel globe("obj/globe.obj");
 	//static ObjectModel light("obj/light1.obj");
 	//static ObjectModel tableStruct2("obj/pooltable_struct.obj");
@@ -82,13 +96,15 @@ void initObjects ()
 //	  static ObjectModel tableTop4("obj/pooltable_table.obj");
 
 	// crypt scenario
+	cout << "crypt scenario" << endl;
 	scenario.setPos(0,-30,0);
 	scenario.setSize(250,350,250);
 	scenario.setTexture(&rockTex);
 	scenario.material.setDiffuse( RGB(265)*0.4, RGB(234)*0.4, RGB(186)*0.4 );
-	objects["crypt"] = &scenario;
+	objects[CRYPT] = &scenario;
 
 	// tables material setup
+	cout << "tables material setup" << endl;
 	Material tableStructMat;
 	tableStructMat.setDiffuse(0.6 *1.5, 0.18 *1.5, 0.14 *1.5);
 	tableStructMat.setSpecular(0.3,0.3,0.3);
@@ -100,6 +116,7 @@ void initObjects ()
 
 	// main table 
 	//materials
+	cout << "main table materials" << endl;
 	tableBottom.setMaterial(tableStructMat);
 	tableMiddle.setMaterial(tableStructMat);
 	tableTop.setMaterial(tableTopMat);
@@ -116,12 +133,14 @@ void initObjects ()
 	tableTop.setSize(100,100,100);
 	tableFrame.setSize(100,100,100);
 	//pipelining
-	objects["tableTop"] = &tableTop;
-	objects["tableBottom"] = &tableBottom;
-	objects["tableMiddle"] = &tableMiddle;
+	cout << "add objects to map" << endl;
+	objects[TABLE_TOP] = &tableTop;
+	objects[TABLE_BOTTOM] = &tableBottom;
+	objects[TABLE_MIDDLE] = &tableMiddle;
+
 #ifdef SHOW_TABLE_FRAME
-	objects["tableFrame"] = &tableFrame;
-	objects["tableFrameBound"] = &tableFrameBound;
+	objects[TABLE_FRAME] = &tableFrame;
+	objects[TABLE_FRAME_BOUND] = &tableFrameBound;
 #endif
 
 	// table2
@@ -166,10 +185,12 @@ void initObjects ()
 
 
 	// infinite scenario globe
+	cout << "infinite scenario globe" << endl;
 	globe.setSize(500,500,500);
 	globe.material.setEmission(1,1,1);
 	globe.setTexture(&starsTex);
-	objects["globe"] = &globe;
+	objects[GLOBE] = &globe;
+	cout << "Done initializing objects" << endl;
 }
 
 void perspectiveViewport( int width, int height ) {
@@ -229,6 +250,17 @@ void orthoViewport( int width, int height ) {
 	// IMPORTANT: don't change the order of these calls
 	game.level->camera2->apply();
 	game.level->lights();
+
+	fprintf(stderr, "level->objects: %x, global objects: %x\n", &objects, game.level->objects);
+
+	map<int, Object*>::const_iterator pos = game.level->objects->find(TABLE_MIDDLE);
+	if (pos == objects.end()) {
+		fprintf(stderr, "tableMiddle not in objects\n");
+	} else {
+		fprintf(stderr, "tableMiddle points to %x\n", objects[TABLE_MIDDLE]);
+	}
+
+	cout << "orthoViewport(): will call drawObjects_partial()" << endl;
 	game.level->drawObjects_partial();
 }	
 
@@ -240,8 +272,8 @@ void reshape(int w, int h) {
 
 #define ACCUM_FRAMES 1
 
-void display () {
-
+void display ()
+{
 	static int draws=0;
 
 	// POG to reduce display rate and priorize variables updating
@@ -278,29 +310,41 @@ void display () {
 void initWorld()
 {    
 	cout << "Loading textures..."; 
+	//cout << "textures/wood.tga" << endl;
 	loadTexture(&woodTex, "textures/wood.tga");
+	//cout << "textures/table.tga" << endl;
 	loadTexture(&tableTex, "textures/table.tga", true);
+	//cout << "textures/rock.tga" << endl;
 	loadTexture(&rockTex, "textures/rock.tga");
+	//cout << "textures/stars3.tga" << endl;
 	loadTexture(&starsTex, "textures/stars3.tga");
+	//cout << "textures/stick.tga" << endl;
 	loadTexture(&stickTex, "textures/stick.tga");
 	for(int i=0; i<N_BALL_TEX; i++) {
 		char path[50];
 		sprintf(path,"textures/Ball%i.tga",i);
+		//cout << path << endl;
 		loadTexture(&ballTex[i], path);
 	}
 	cout << "Done.\n"; 
 
 	cout << "Initializing objects...";
+	cout << "cameras" << endl;
 	static Camera camera(1),  //main camera
 		      camera2(2); //viewport camera
+
+	cout << "level" << endl;
 
 	static Level level(&objects, &theLights, &camera, &camera2, ballTex, stickTex);
 	game.setLevel(&level);
 
+	cout << "will call initObjects()" << endl;
 	initObjects();
 	cout << "Done.\n";    
 
+	cout << "will update OSD" << endl;
 	game.updateOsd();
+	cout << "done updating OST for the first time" << endl;
 }
 
 //--------------------------- KEYBOARD ---------------------------//
@@ -670,6 +714,7 @@ int main (int argc, char **argv) {
 	initGL();
 	initWorld();
 
+	cout << "Registering callbacks" << endl;
 	glutDisplayFunc (display);
 	glutIdleFunc (display);
 
@@ -681,9 +726,9 @@ int main (int argc, char **argv) {
 	glutReshapeFunc(reshape);
 	//glutTimerFunc(0, updateState, 0);
 	//glutTimerFunc(0, displayCaller, 0);
+	cout << "Done registering callbacks" << endl;
 
 	glutMainLoop(); 
-
 
 	return 0;
 } 

@@ -95,7 +95,14 @@ enum{
 	K_SPACEBAR	= 32
 };
 	
-	
 
+#define CRYPT 0
+#define TABLE_TOP 1
+#define TABLE_BOTTOM 2
+#define TABLE_MIDDLE 3
+#define GLOBE 4
+
+#define TABLE_FRAME 0
+#define TABLE_FRAME_BOUND 0
 
 

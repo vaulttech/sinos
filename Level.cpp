@@ -6,7 +6,7 @@
 
 
 //------------------------------------------------------------ CONSTRUCTORS
-Level::Level(	map<const char* ,Object*> *_objects, vector<LightInfo*> *_theLights,
+Level::Level(	map<int, Object*> *_objects, vector<LightInfo*> *_theLights,
 				Camera *_camera, Camera *_camera2,
 				Texture _ballTex[], Texture _stickTex)
 {	
@@ -108,7 +108,7 @@ void Level::drawGuides()
 			glCircle3f(HC[i][0],TABLE_PLANE_Y+1,HC[i][1],HC[i][2]);
 				
 		// Table area
-		((ObjectModel*)(*objects)["tableFrameBound"])->drawNormals();
+		((ObjectModel*)(*objects)[TABLE_FRAME_BOUND])->drawNormals();
 		
 		// Holes entrances
 		for(int i=0; i<6; i++){  
@@ -131,9 +131,9 @@ void Level::drawObjects () {
 	stick.draw();
 	
 	// draw all objects
-	map<const char* ,Object*>::iterator it;
+	map<int,Object*>::iterator it;
 	for( it = objects->begin(); it != objects->end(); it++ )
-		if( !strcmp(it->first, "crypt") )
+		if( it->first != CRYPT)
 			it->second->draw();
 			
 	// draw balls
@@ -148,7 +148,7 @@ void Level::drawObjects () {
 	}
 	
 	glEnable (GL_LIGHT2);
-		(*objects)["crypt"]->draw();
+		(*objects)[CRYPT]->draw();
 	glDisable (GL_LIGHT2);
 
 	// draw guideline on Main Viewport
@@ -161,10 +161,28 @@ void Level::drawObjects_partial ()
 	stick.draw();
 	if( !stick.isHidden )
 		makeGuideLine( &balls, stick.rot[1] );
-	
-	(*objects)["tableMiddle"]->draw();
-	(*objects)["tableBottom"]->draw();
-	(*objects)["tableTop"]->draw();
+
+	cout << "Will draw tableMiddle" << endl;
+
+	fprintf(stderr, "in drawObjects_partial: level->objects: %x\n", objects);
+	for (map<int, Object*>::iterator it = objects->begin();
+		it != objects->end(); it++) {
+		cout << "Key: " << it->first << "," << it->second <<
+			"," << (*objects)[it->first] << endl;
+	}
+
+	map<int, Object*>::const_iterator pos = objects->find(TABLE_MIDDLE);
+	if (pos == objects->end()) {
+		fprintf(stderr, "tableMiddle not in objects\n");
+	} else {
+		fprintf(stderr, "tableMiddle points to %x\n", (*objects)[TABLE_MIDDLE]);
+	}
+
+	(*objects)[TABLE_MIDDLE]->draw();
+	cout << "Finished drawing tableMiddle" << endl;
+
+	(*objects)[TABLE_BOTTOM]->draw();
+	(*objects)[TABLE_TOP]->draw();
 
 	// draw balls
 	for( int i=0; i<balls.size(); i++ ) {
@@ -175,7 +193,7 @@ void Level::drawObjects_partial ()
 	}
 
 	#ifdef SHOW_TABLE_FRAME
-		(*objects)["tableFrame"]->draw();
+		(*objects)[TABLE_FRAME]->draw();
 	#endif
 	
 }
@@ -204,8 +222,8 @@ void Level::castShadows() {
 		glShadowProjection(lightSource,floorPlane,planeNormal); //manipulates the matrix so everything will be projected in the FLOORPLANE
 			glClear( GL_STENCIL_BUFFER_BIT);
 			glStencilFunc(GL_EQUAL, 0, 1); 						//will let only one vertex be drawn on each position each time shadow
-				(*objects)["tableMiddle"]->draw();
-				(*objects)["tableTop"]->draw(); 
+				(*objects)[TABLE_MIDDLE]->draw();
+				(*objects)[TABLE_TOP]->draw();
 				stick.draw();
 	glPopMatrix();
 	
@@ -216,7 +234,7 @@ void Level::castShadows() {
 			glColorMask(false, false, false, false); 			//disables Color Buffer
 			glDepthMask(false); 								//disables Depth Buffer
 			glStencilFunc(GL_ALWAYS, 1, 1); 					//creates the mask that will define where shadow will be cast
-				(*objects)["tableTop"]->draw();
+				(*objects)[TABLE_TOP]->draw();
 			
 			glColorMask(true,true,true,true);
 			glDepthMask(true); 
@@ -226,7 +244,7 @@ void Level::castShadows() {
 					if( !balls[i].hasFallen )
 						balls[i].draw();
 				#ifdef SHOW_TABLE_FRAME
-					(*objects)["tableFrame"]->draw();
+					(*objects)[TABLE_FRAME]->draw();
 				#endif
 	glPopMatrix();
 	
@@ -336,13 +354,13 @@ int Level::testBallsCollision(int ballSet)
 	 * Collision tests with table's frame (obj's based detection)
 	 * 
 	 */
-	GLMmodel* model = ((ObjectModel*)(*objects)["tableFrameBound"])->getModelPointer();
-	double x2 = (*objects)["tableFrameBound"]->pos[0],
-		   y2 = (*objects)["tableFrameBound"]->pos[1],
-		   z2 = (*objects)["tableFrameBound"]->pos[2];
-	double sx = (*objects)["tableFrameBound"]->size[0],
-		   sy = (*objects)["tableFrameBound"]->size[1],
-		   sz = (*objects)["tableFrameBound"]->size[2];
+	GLMmodel* model = ((ObjectModel*)(*objects)[TABLE_FRAME_BOUND])->getModelPointer();
+	double x2 = (*objects)[TABLE_FRAME_BOUND]->pos[0],
+		   y2 = (*objects)[TABLE_FRAME_BOUND]->pos[1],
+		   z2 = (*objects)[TABLE_FRAME_BOUND]->pos[2];
+	double sx = (*objects)[TABLE_FRAME_BOUND]->size[0],
+		   sy = (*objects)[TABLE_FRAME_BOUND]->size[1],
+		   sz = (*objects)[TABLE_FRAME_BOUND]->size[2];
 	double truex, truey, truez;
 	
 	

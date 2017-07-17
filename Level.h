@@ -32,43 +32,47 @@ enum
 class Level
 {
 	private:
-		map<const char*, Object*> *objects;
-		vector<LightInfo*> *theLights;
-		
-		Texture stickTex, ballTex[N_BALL_TEX];
-		
-		void  initBalls( int mode );
-		
+	vector<LightInfo*> *theLights;
+
+	Texture stickTex, ballTex[N_BALL_TEX];
+
+	void  initBalls( int mode );
+
 	public:
-		ObjectStick stick;
-		vector<ObjectBall> balls;
-		
-		Camera *camera, *camera2;
-		
+	map<int, Object*>* objects;
+	ObjectStick stick;
+	vector<ObjectBall> balls;
+
+	Camera *camera, *camera2;
+
 	//---------------------------- CONSTRUCTORS
-		Level(map<const char*, Object*> *_objects, vector<LightInfo*> *_theLights,
-			  Camera *_camera, Camera *_camera2,
-			  Texture ballTex[], Texture stickTex);
+	Level(map<int, Object*> *_objects, vector<LightInfo*> *_theLights,
+		  Camera *_camera, Camera *_camera2,
+		  Texture ballTex[], Texture stickTex);
 		
 	//---------------------------- DESTRUCTORS
-		~Level();
-	
+	~Level();
+
 	//---------------------------- GETTERS & SETTERS
+	//map<int, Object*>* getObjects();
 
 	//---------------------------- OTHER METHODS
-		void 			init();
-		void 			initObjects();
-		void 			initLights();
-	
-		void			drawGuides();
-		void 			drawObjects();
-		void 			drawObjects_partial();	
-		void 			lights();
-		void 			castShadows();
-		
-		vector<int>		updateState(int whichPlayer);
-		int 			testBallsCollision(int whichPlayer);
-		
-		void 			endGame();
+	void 			init();
+	void 			initObjects();
+	void 			initLights();
+
+	void			drawGuides();
+	void 			drawObjects();
+	void 			drawObjects_partial();
+	void 			lights();
+	void 			castShadows();
+
+	vector<int>		updateState(int whichPlayer);
+	int 			testBallsCollision(int whichPlayer);
+
+	void 			endGame();
 };
+
+//map<int, Object*>* Level::getObjects()
+//{	return objects;	}
 

@@ -125,6 +125,7 @@ double normalizeVector( double v[3] )
 	v[0] = v[0] / norma;
 	v[1] = v[1] / norma;
 	v[2] = v[2] / norma;
+	return norma;
 }
 
 double getAngleBetween( const double v[3], const double u[3] )
@@ -221,7 +222,7 @@ void glCircle3f(GLfloat x, GLfloat y, GLfloat z, GLfloat radius) {
     glPopMatrix();
 }  
 
-void loadTexture(Texture *texVar, char* texFile, bool makeMipmap)
+void loadTexture(Texture *texVar, const char* texFile, bool makeMipmap)
 /* Adapted from http://www.3dcodingtutorial.com/Textures/Loading-Textures.html */
 {
     if (LoadTGA(texVar, texFile))

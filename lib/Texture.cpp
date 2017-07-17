@@ -11,7 +11,7 @@ TGA tga;												// TGA image data
 GLubyte uTGAcompare[12] = {0,0,2,0,0,0,0,0,0,0,0,0};	// Uncompressed TGA Header
 GLubyte cTGAcompare[12] = {0,0,10,0,0,0,0,0,0,0,0,0};	// Compressed TGA Header	
 
-bool LoadTGA(Texture * texture, char * filename)				// Load a TGA file
+bool LoadTGA(Texture * texture, const char * filename)				// Load a TGA file
 {
 	FILE * fTGA;												// File pointer to texture file
 	fTGA = fopen(filename, "rb");								// Open file for reading
@@ -49,7 +49,7 @@ bool LoadTGA(Texture * texture, char * filename)				// Load a TGA file
 	return true;															// All went well, continue on
 }
 
-bool LoadUncompressedTGA(Texture * texture, char * filename, FILE * fTGA)	// Load an uncompressed TGA (note, much of this code is based on NeHe's 
+bool LoadUncompressedTGA(Texture * texture, const char * filename, FILE * fTGA)	// Load an uncompressed TGA (note, much of this code is based on NeHe's 
 {																			// TGA Loading code nehe.gamedev.net)
 	if(fread(tga.header, sizeof(tga.header), 1, fTGA) == 0)					// Read TGA header
 	{										
@@ -116,7 +116,7 @@ bool LoadUncompressedTGA(Texture * texture, char * filename, FILE * fTGA)	// Loa
 	return true;															// Return success
 }
 
-bool LoadCompressedTGA(Texture * texture, char * filename, FILE * fTGA)		// Load COMPRESSED TGAs
+bool LoadCompressedTGA(Texture * texture, const char * filename, FILE * fTGA)		// Load COMPRESSED TGAs
 { 
 	if(fread(tga.header, sizeof(tga.header), 1, fTGA) == 0)					// Attempt to read header
 	{

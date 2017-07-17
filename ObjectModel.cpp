@@ -74,19 +74,30 @@ void ObjectModel::calculateNormals()
 
 void ObjectModel::draw() const
 {
+	
+	printf("modelPointer: %x\n", modelPointer);
 	if(modelPointer)	// Test if there is anything to draw
 	{
-		//drawBegin();		// Move, scale and rotate the object to the right place
+		if (!strcmp(modelPointer->pathname, "obj/pooltable_table.obj"))
+			return;
+
+		cout << "Will call drawBegin()" << endl;
+		drawBegin();		// Move, scale and rotate the object to the right place
 		if( texture!=NULL )
 		{
 			glBindTexture(GL_TEXTURE_2D, texture->texID);
+			cout << "Will call draw() with texture" << endl;
 			glmDraw(modelPointer, GLM_SMOOTH | GLM_TEXTURE);
+			cout << "Came back from draw()" << endl;
 		}
 		else
 		{
+			cout << "Will call draw() without texture" << endl;
 			glmDraw(modelPointer, GLM_SMOOTH);
+			cout << "Came back from draw()" << endl;
 		}
-		//drawEnd();
+		cout << "Will call drawEnd()" << endl;
+		drawEnd();
 	}
 }
 
