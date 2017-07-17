@@ -9,7 +9,6 @@
 
 #include "lib/glm.h"
 #include "Object.h"
-#include <string>
 #include <iostream>
 
 using namespace std;

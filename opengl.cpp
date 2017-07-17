@@ -15,15 +15,14 @@
 
 #include "Object.h"
 #include "ObjectModel.h"
-//#include "ObjectBall.h"
-//#include "ObjectStick.h"
+#include "ObjectBall.h"
+#include "ObjectStick.h"
 #include "Camera.h"
 #include "LightInfo.h"
-//#include "Level.h"
-//#include "Game.h"
+#include "Level.h"
+#include "Game.h"
 #include "constants.h"
 #include "utils.h"
-
 
 #include <iostream>
 using namespace std;
@@ -50,9 +49,8 @@ int width, height;
 // Texture files
 static Texture tigerTex, woodTex, tableTex, rockTex, starsTex, ballTex[N_BALL_TEX], stickTex;
 
-/*
 // Objects
-map<string,Object*> objects;
+map<const char*, Object*> objects;
 
 // Mother class
 Game game;
@@ -281,6 +279,7 @@ void initWorld()
 {    
 	cout << "Loading textures..."; 
 	loadTexture(&woodTex, "textures/wood.tga");
+	/*
 	loadTexture(&tableTex, "textures/table.tga", true);
 	loadTexture(&rockTex, "textures/rock.tga");
 	loadTexture(&starsTex, "textures/stars3.tga");
@@ -303,9 +302,11 @@ void initWorld()
 	cout << "Done.\n";    
 
 	game.updateOsd();
+	*/
 }
 
 //--------------------------- KEYBOARD ---------------------------//
+/*
 void keyboardFunc (unsigned char key, int x, int y) {
 
 	if ( key==K_SPACEBAR) {

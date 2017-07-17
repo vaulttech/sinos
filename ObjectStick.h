@@ -26,7 +26,7 @@ class ObjectStick : public ObjectModel
 	
 		//---------------------------- CONSTRUCTORS
 		ObjectStick();
-		ObjectStick(string filename, ObjectBall* objectCenter);
+		ObjectStick(const char* filename, ObjectBall* objectCenter);
 		
 		//---------------------------- DESTRUCTORS
 		

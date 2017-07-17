@@ -12,7 +12,6 @@
 using namespace std;
 
 #include <vector>
-#include <string>
 #include <map>
 
 #include "ObjectModel.h"
@@ -33,7 +32,7 @@ enum
 class Level
 {
 	private:
-		map<string,Object*> *objects;
+		map<const char*, Object*> *objects;
 		vector<LightInfo*> *theLights;
 		
 		Texture stickTex, ballTex[N_BALL_TEX];
@@ -47,7 +46,7 @@ class Level
 		Camera *camera, *camera2;
 		
 	//---------------------------- CONSTRUCTORS
-		Level(map<string,Object*> *_objects, vector<LightInfo*> *_theLights,
+		Level(map<const char*, Object*> *_objects, vector<LightInfo*> *_theLights,
 			  Camera *_camera, Camera *_camera2,
 			  Texture ballTex[], Texture stickTex);
 		
@@ -72,3 +71,4 @@ class Level
 		
 		void 			endGame();
 };
+

@@ -6,7 +6,7 @@
 
 
 //------------------------------------------------------------ CONSTRUCTORS
-Level::Level(	map<string,Object*> *_objects, vector<LightInfo*> *_theLights,
+Level::Level(	map<const char* ,Object*> *_objects, vector<LightInfo*> *_theLights,
 				Camera *_camera, Camera *_camera2,
 				Texture _ballTex[], Texture _stickTex)
 {	
@@ -131,10 +131,10 @@ void Level::drawObjects () {
 	stick.draw();
 	
 	// draw all objects
-	map<string,Object*>::iterator it;
-	for( it = objects->begin(); it!=objects->end(); it++ )
-		if( (*it).first!="crypt" )
-			(*it).second->draw();
+	map<const char* ,Object*>::iterator it;
+	for( it = objects->begin(); it != objects->end(); it++ )
+		if( !strcmp(it->first, "crypt") )
+			it->second->draw();
 			
 	// draw balls
 	for( int i=0; i<balls.size(); i++ ) {

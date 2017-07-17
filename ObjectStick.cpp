@@ -16,7 +16,7 @@ ObjectStick::ObjectStick()
 	setAttackStrenght(1);
 }
 
-ObjectStick::ObjectStick(string filename, ObjectBall* objectCenter)
+ObjectStick::ObjectStick(const char* filename, ObjectBall* objectCenter)
 :	ObjectModel(filename)
 {
 	rot[0] = -10;

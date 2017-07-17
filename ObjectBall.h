@@ -7,7 +7,6 @@
 #pragma once
 
 #include <iostream>
-#include <string>
 #include "lib/glm.h"
 #include "ObjectModel.h"
 
