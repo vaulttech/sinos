@@ -221,10 +221,10 @@ void glCircle3f(GLfloat x, GLfloat y, GLfloat z, GLfloat radius) {
     glPopMatrix();
 }  
 
-void loadTexture(Texture *texVar, string texFile, bool makeMipmap)
+void loadTexture(Texture *texVar, char* texFile, bool makeMipmap)
 /* Adapted from http://www.3dcodingtutorial.com/Textures/Loading-Textures.html */
 {
-    if (LoadTGA(texVar, (char*)texFile.c_str()))
+    if (LoadTGA(texVar, texFile))
     {
 
         // This tells opengl to create 1 texture and put it's ID in the given integer variable

@@ -77,7 +77,7 @@ void glCircle3f ( GLfloat x, GLfloat y, GLfloat z, GLfloat radius );
 /* loadTexture()
  * 	Adapted from http://www.3dcodingtutorial.com/Textures/Loading-Textures.html
  */
-void loadTexture(Texture *texVar, string texFile, bool makeMipmap=false);
+void loadTexture(Texture *texVar, char* texFile, bool makeMipmap=false);
 	
 /* drawPlane()
  * 	Adapted from http://www.opengl.org/resources/code/samples/glut_examples/examples/spots.c
