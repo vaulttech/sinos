@@ -73,7 +73,7 @@ void initObjects ()
 	static ObjectModel scenario("obj/crypt.obj");
 	static ObjectModel globe("obj/globe.obj");
 	//static ObjectModel light("obj/light1.obj");
-	static ObjectModel tableStruct2("obj/pooltable_struct.obj");
+	//static ObjectModel tableStruct2("obj/pooltable_struct.obj");
 
 //	  static ObjectModel tableTop2("obj/pooltable_table.obj");
 //	  static ObjectModel tableStruct3("obj/pooltable_struct.obj");
@@ -279,7 +279,6 @@ void initWorld()
 {    
 	cout << "Loading textures..."; 
 	loadTexture(&woodTex, "textures/wood.tga");
-	/*
 	loadTexture(&tableTex, "textures/table.tga", true);
 	loadTexture(&rockTex, "textures/rock.tga");
 	loadTexture(&starsTex, "textures/stars3.tga");
@@ -302,11 +301,9 @@ void initWorld()
 	cout << "Done.\n";    
 
 	game.updateOsd();
-	*/
 }
 
 //--------------------------- KEYBOARD ---------------------------//
-/*
 void keyboardFunc (unsigned char key, int x, int y) {
 
 	if ( key==K_SPACEBAR) {
@@ -484,7 +481,6 @@ void endTheGame(int value)
 	game.level->endGame();
 }
 
-*/
 void initLights () {
 
 	// ambient light
@@ -672,7 +668,6 @@ int main (int argc, char **argv) {
 	}
 
 	initGL();
-	/*
 	initWorld();
 
 	glutDisplayFunc (display);
@@ -687,7 +682,6 @@ int main (int argc, char **argv) {
 	//glutTimerFunc(0, updateState, 0);
 	//glutTimerFunc(0, displayCaller, 0);
 
-	*/
 	glutMainLoop(); 
 
 
