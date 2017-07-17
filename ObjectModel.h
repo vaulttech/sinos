@@ -22,7 +22,7 @@ class ObjectModel: public Object
 		//---------------------------- CONSTRUCTORS
 		ObjectModel();
 		ObjectModel(GLMmodel* model);
-		ObjectModel(string filename);
+		ObjectModel(const char* filename);
 
 		//---------------------------- DESTRUCTORS
 		~ObjectModel();
@@ -32,7 +32,7 @@ class ObjectModel: public Object
 		void		setModelPointer(GLMmodel* model);
 
 		//---------------------------- OTHER METHODS
-		void			loadFromFile(string file);
+		void			loadFromFile(const char* file);
 		void			calculateNormals();
 		virtual void	draw() const;
 		void			drawNormals() const;

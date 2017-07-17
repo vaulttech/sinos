@@ -4,6 +4,7 @@
 //
 
 #include <iostream>
+#include <string.h>
 #include "ObjectModel.h"
 
 
@@ -20,12 +21,13 @@ ObjectModel::ObjectModel(GLMmodel* model)
 	modelPointer = model;
 }
 
-ObjectModel::ObjectModel(string filename)
+ObjectModel::ObjectModel(const char* filename)
 :	Object()
 {
 	modelPointer = NULL;
 
-	// I can't understand: if I uncomment this line, it breaks
+	//char* filename_cstr = new char [filename.length()+1];
+	//strcpy (filename_cstr, filename.c_str());
 	loadFromFile(filename);
 }
 
@@ -51,11 +53,11 @@ void ObjectModel::setModelPointer(GLMmodel* model)
 	this->modelPointer = model;
 }
 
-void ObjectModel::loadFromFile(string file)
+void ObjectModel::loadFromFile(const char* file)
 {
 	if(!getModelPointer())
 	{
-		setModelPointer(glmReadOBJ(file.c_str()));
+		setModelPointer(glmReadOBJ(file));
 		if ( !getModelPointer() )
 			cout << "Could not open " << file << endl;
 
@@ -74,15 +76,17 @@ void ObjectModel::draw() const
 {
 	if(modelPointer)	// Test if there is anything to draw
 	{
-		drawBegin();		// Move, scale and rotate the object to the right place
+		//drawBegin();		// Move, scale and rotate the object to the right place
 		if( texture!=NULL )
 		{
 			glBindTexture(GL_TEXTURE_2D, texture->texID);
 			glmDraw(modelPointer, GLM_SMOOTH | GLM_TEXTURE);
 		}
 		else
+		{
 			glmDraw(modelPointer, GLM_SMOOTH);
-		drawEnd();
+		}
+		//drawEnd();
 	}
 }
 
