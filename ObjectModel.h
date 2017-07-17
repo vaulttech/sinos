@@ -7,32 +7,34 @@
 
 #pragma once
 
-#include <iostream>
-#include <string>
 #include "lib/glm.h"
-#include "lib/Texture.h"
 #include "Object.h"
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 class ObjectModel: public Object
 {
-private:
-	GLMmodel* modelPointer;
-public:
-	//---------------------------- CONSTRUCTORS
-	ObjectModel();
-	ObjectModel(GLMmodel* model);
-	ObjectModel(string filename);
+	private:
+		GLMmodel* modelPointer;
+	public:
+		//---------------------------- CONSTRUCTORS
+		ObjectModel();
+		ObjectModel(GLMmodel* model);
+		ObjectModel(string filename);
 
-	//---------------------------- DESTRUCTORS
-	~ObjectModel();
-	
-	//---------------------------- GETTERS & SETTERS
-	GLMmodel* 	getModelPointer() const;
-	void		setModelPointer(GLMmodel* model);
-	
-	//---------------------------- OTHER METHODS
-	void			loadFromFile(string file);
-	void			calculateNormals();
-	virtual void	draw() const;
-	void			drawNormals() const;
+		//---------------------------- DESTRUCTORS
+		~ObjectModel();
+
+		//---------------------------- GETTERS & SETTERS
+		GLMmodel* 	getModelPointer() const;
+		void		setModelPointer(GLMmodel* model);
+
+		//---------------------------- OTHER METHODS
+		void			loadFromFile(string file);
+		void			calculateNormals();
+		virtual void	draw() const;
+		void			drawNormals() const;
 };
+

@@ -6,8 +6,8 @@
 #include <iostream>
 #include "ObjectModel.h"
 
-//------------------------------------------------------------ CONSTRUCTORS
 
+//------------------------------------------------------------ CONSTRUCTORS
 ObjectModel::ObjectModel()
 :	Object()
 {
@@ -24,6 +24,8 @@ ObjectModel::ObjectModel(string filename)
 :	Object()
 {
 	modelPointer = NULL;
+
+	// I can't understand: if I uncomment this line, it breaks
 	loadFromFile(filename);
 }
 
@@ -53,7 +55,7 @@ void ObjectModel::loadFromFile(string file)
 {
 	if(!getModelPointer())
 	{
-		setModelPointer(glmReadOBJ(file));
+		setModelPointer(glmReadOBJ(file.c_str()));
 		if ( !getModelPointer() )
 			cout << "Could not open " << file << endl;
 
@@ -65,7 +67,7 @@ void ObjectModel::loadFromFile(string file)
 void ObjectModel::calculateNormals()
 {
 	glmFacetNormals(getModelPointer());
-    glmVertexNormals(getModelPointer(), 90.0);
+	glmVertexNormals(getModelPointer(), 90.0);
 }
 
 void ObjectModel::draw() const
@@ -87,24 +89,25 @@ void ObjectModel::draw() const
 void ObjectModel::drawNormals() const
 {
 	double x2 = pos[0],
-		   y2 = pos[1],
-		   z2 = pos[2];
+	       y2 = pos[1],
+	       z2 = pos[2];
 	double sx = size[0],
-		   sy = size[1],
-		   sz = size[2];
+	       sy = size[1],
+	       sz = size[2];
 	double truex, truey, truez;
-	
+
 	for(int v=0; v<modelPointer->numvertices; v++)
 	{
 		truex = x2 + sx*modelPointer->vertices[3*v + 0];
 		truey = y2 + sy*modelPointer->vertices[3*v + 1];
 		truez = z2 + sz*modelPointer->vertices[3*v + 2];
-		
+
 		glBegin(GL_LINES);
-			glVertex3f(truex,truey,truez);
-			glVertex3f(x2 + (truex + modelPointer->normals[3*v + 0]),
-					   y2 + (truey + modelPointer->normals[3*v + 1]),
-					   z2 + (truez + modelPointer->normals[3*v + 2]) );
+		glVertex3f(truex,truey,truez);
+		glVertex3f(x2 + (truex + modelPointer->normals[3*v + 0]),
+				y2 + (truey + modelPointer->normals[3*v + 1]),
+				z2 + (truez + modelPointer->normals[3*v + 2]) );
 		glEnd();
 	}
 }
+
