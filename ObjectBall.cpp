@@ -5,6 +5,7 @@
 
 #include <iostream>
 using namespace std;
+
 #include "ObjectBall.h"
 #include "constants.h"
 #include <math.h>
@@ -18,8 +19,8 @@ ObjectBall::ObjectBall()
 {
 	radius = 0;
 	res = 0;	
-	
-    reset();
+
+	reset();
 }
 
 ObjectBall::ObjectBall( GLdouble _radius, int newRes )
@@ -27,17 +28,17 @@ ObjectBall::ObjectBall( GLdouble _radius, int newRes )
 {
 	radius = _radius;
 	res = newRes;
-	
-    reset();
+
+	reset();
 }
 
-ObjectBall::ObjectBall(string filename)
+ObjectBall::ObjectBall(const char* filename)
 :	ObjectModel(filename)
 {
 	radius = 0;
 	res = 0;
-	
-    reset();
+
+	reset();
 }
 
 
@@ -59,11 +60,20 @@ float ObjectBall::getPerimeter() const
 
 void ObjectBall::setRandColor()
 {
-    double r = getRandBetween(0,60),
-		   g = getRandBetween(0,60),
-		   b = getRandBetween(0,60);
-	
-    material.setDiffuse(r/100.,g/100.,b/100.);    
+	double r = getRandBetween(0,60),
+	       g = getRandBetween(0,60),
+	       b = getRandBetween(0,60);
+
+	material.setDiffuse(r/100.,g/100.,b/100.);    
+}
+
+void ObjectBall::resetSpeed()
+{
+	moveVector[0] = 0;
+	moveVector[1] = 0;
+	moveVector[2] = 0;
+
+	setRot(0,0,0);
 }
 
 void ObjectBall::reset()
@@ -72,7 +82,7 @@ void ObjectBall::reset()
 	resetSpeed();	
 	resetRotateMatrix();
 	setQuad();
-}    
+}     
 
 void ObjectBall::setProps( GLdouble newRadius, int newRes )
 {
@@ -93,19 +103,10 @@ void ObjectBall::setRadius(GLdouble newRadius)
 void ObjectBall::setDirection( double angle )
 {
 	double speed = getSpeed();
-	
-	resetSpeed();
-	
-	applyForce(speed,angle+90);
-}
 
-void ObjectBall::resetSpeed()
-{
-	moveVector[0] = 0;
-	moveVector[1] = 0;
-	moveVector[2] = 0;
-	
-	setRot(0,0,0);
+	resetSpeed();
+
+	applyForce(speed,angle+90);
 }
 
 double ObjectBall::getDirection() const
@@ -152,14 +153,14 @@ float ObjectBall::getPastZ() const
 
 //------------------------------------------------------------ OTHER METHODS
 
-void ObjectBall::backTrack( const double origv[3], bool invert /*default=false*/ )
+void ObjectBall::backTrack( const double origv[3], bool invert)
 {
 	double v[3] = {origv[0],origv[1],origv[2]};
 	int xsign, zsign;
-		
+
 	xsign = 2*( v[0]>0 )-1;
 	zsign = 2*( v[2]>0 )-1;
-	
+
 	if(invert) {
 		setPosX( getPosX() + xsign*BACKTRACK_STEP);
 		setPosZ( getPosZ() + zsign*BACKTRACK_STEP); 
@@ -172,47 +173,46 @@ void ObjectBall::backTrack( const double origv[3], bool invert /*default=false*/
 
 void ObjectBall::reflectAngle( double axisx, double axisy, double axisz )
 {
-	/* Formula for reflected angle is: 2*N(V.N)-V */
-	
+	// Formula for reflected angle is: 2*N(V.N)-V
+
 	double axis[3] = {axisx, axisy, axisz};
 	double dot = dotProduct(axis,moveVector);
 
 	double final[3] = {axisx, axisy, axisz};
-	
+
 	final[0] *= 2;
 	final[2] *= 2;
-	
+
 	final[0] *= dot;
 	final[2] *= dot;
-	
+
 	final[0] -= moveVector[0];
 	final[2] -= moveVector[2];
-	
+
 	moveVector[0] = -final[0];
 	moveVector[2] = -final[2];
 }
 
 pair<bool,bool> ObjectBall::updateState()
-/* Return: first  = if ball has moved
- *         second = if ball has been snooked
- */
+	// Return: first  = if ball has moved
+	//         second = if ball has been snooked
 { 
 	bool hasMoved = getSpeed() > 0.;
 	bool hasSnookedBool = false;
-	
+
 	if( hasMoved )
 	{
 		// Update speed			
 		changeSpeed(BALL_DECELERATION_N);
-			
+
 		// rotation by movement 
 		setRot( RAD(((moveVector[2])*180.)/M_PI*BALL_RADIUS),
-			    0,
-			    RAD(-((moveVector[0])*180.)/M_PI*BALL_RADIUS));
-		
+				0,
+				RAD(-((moveVector[0])*180.)/M_PI*BALL_RADIUS));
+
 		// update position
 		setPos( getFutureX(), getFutureY(), getFutureZ() );
-		
+
 		// test if ball is falling
 		if( hasFallen ) { 
 			if( getPosY() > 1 ) { //while is over the ground
@@ -246,55 +246,57 @@ void ObjectBall::applyForce( float magnitude, float direction, bool reflectAngle
 		moveVector[2] += -magnitude * sin( RAD(direction) );
 	}
 }
-	
+
 void ObjectBall::changeSpeed( double factor ) 
 { 
 	factor = pow(factor,1./STATEUPDATES_PER_SEC); 
-	
+
 	moveVector[0] *= factor;
 	moveVector[2] *= factor;
-	
+
 	if( getSpeed() > BALL_MAX_SPEED) {
 		factor = (BALL_MAX_SPEED-1)/getSpeed();
-		
+
 		moveVector[0] *= factor;
 		moveVector[2] *= factor;
 	}
-		
+
 	if( getSpeed() < BALL_MIN_SPEED )
 		resetSpeed();
 }
 
 void ObjectBall::drawBegin() const
-/* Overloading of original Object::drawBegin() */
+// Overloading of original Object::drawBegin()
 {
 	glPushMatrix();
-	
+
 	glTranslated(getPosX(), getPosY(), getPosZ());
 	glScalef(getSizeX(), getSizeX(), getSizeX());
-	glMultMatrixd(rotMat); 						//see updateRotateMatrix()
-	    		
+	glMultMatrixd(rotMat); //see updateRotateMatrix()
+
 	material.apply();	
 }
 
 void ObjectBall::draw() const
 {
 	GLMmodel* modelPointer = getModelPointer();
-	
+
 	if( modelPointer )
 	{
 		ObjectBall::drawBegin();
-			if( texture==NULL )
-				glmDraw(modelPointer, GLM_SMOOTH);
-			else
-			{
-				glBindTexture(GL_TEXTURE_2D, texture->texID);
-				glmDraw(modelPointer, GLM_SMOOTH | GLM_TEXTURE);
-			}
+		if( texture==NULL )
+		{
+			glmDraw(modelPointer, GLM_SMOOTH);
+		}
+		else
+		{
+			glBindTexture(GL_TEXTURE_2D, texture->texID);
+			glmDraw(modelPointer, GLM_SMOOTH | GLM_TEXTURE);
+		}
 		Object::drawEnd();
 	}
-    else
-    {
+	else
+	{
 		ObjectBall::drawBegin();  
 		if( texture==NULL )
 			gluSphere(quadricSphere,radius,res,res);
@@ -302,62 +304,63 @@ void ObjectBall::draw() const
 		{
 			gluQuadricTexture(quadricSphere, GL_TRUE);
 			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-				
+
 			glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 			glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_SPHERE_MAP);
 			glBindTexture(GL_TEXTURE_2D, texture->texID);
 
 			gluSphere(quadricSphere,radius,res,res);
-			
+
 			gluQuadricTexture(quadricSphere, GL_FALSE);			
 		}
 		Object::drawEnd();
-     }	
+	}	
 
 }
 
 void ObjectBall::drawVectors() const
 {
 	glDisable(GL_LIGHTING);
-	
-		glBegin(GL_LINES);
-			glVertex3f(pos[0],pos[1],pos[2]);
-			glVertex3f(pos[0] + moveVector[0],
-					   pos[1],
-					   pos[2] );
-		glEnd();
-		glBegin(GL_LINES);
-			glVertex3f(pos[0],pos[1],pos[2]);
-			glVertex3f(pos[0],
-					   pos[1],
-					   pos[2]+ moveVector[2] );
-		glEnd();
-		glBegin(GL_LINES);
-			glVertex3f(pos[0],pos[1],pos[2]);
-			glVertex3f(pos[0],
-					   pos[1]+ moveVector[1],
-					   pos[2]);
-		glEnd();		
 
-		glBegin(GL_LINES);
-			glVertex3f(pos[0],pos[1],pos[2]);
-			glVertex3f(pos[0]+ getSpeed()*cos(RAD(getDirection())),
-					   pos[1],
-					   pos[2]+ -getSpeed()*sin(RAD(getDirection())) );
-		glEnd();	
-	
+	glBegin(GL_LINES);
+	glVertex3f(pos[0],pos[1],pos[2]);
+	glVertex3f(pos[0] + moveVector[0],
+			pos[1],
+			pos[2] );
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex3f(pos[0],pos[1],pos[2]);
+	glVertex3f(pos[0],
+			pos[1],
+			pos[2]+ moveVector[2] );
+	glEnd();
+	glBegin(GL_LINES);
+	glVertex3f(pos[0],pos[1],pos[2]);
+	glVertex3f(pos[0],
+			pos[1]+ moveVector[1],
+			pos[2]);
+	glEnd();		
+
+	glBegin(GL_LINES);
+	glVertex3f(pos[0],pos[1],pos[2]);
+	glVertex3f(pos[0]+ getSpeed()*cos(RAD(getDirection())),
+			pos[1],
+			pos[2]+ -getSpeed()*sin(RAD(getDirection())) );
+	glEnd();	
+
 	glEnable(GL_LIGHTING);
 }
 
 void ObjectBall::updateRotateMatrix()
-/* Adapted from OpenGL Screen & Object Space Rotations - MaxH - Mike Werner April 28, 2009 */
+	// Adapted from OpenGL Screen & Object Space Rotations
+	// 	MaxH - Mike Werner April 28, 2009
 {
-   glLoadIdentity ();
-   glRotatef (getRotX(), 1,0,0);
-   glRotatef (getRotY(), 0,1,0);
-   glRotatef (getRotZ(), 0,0,1);
-   glMultMatrixd (rotMat);
-   glGetDoublev (GL_MODELVIEW_MATRIX, rotMat);
+	glLoadIdentity ();
+	glRotatef (getRotX(), 1,0,0);
+	glRotatef (getRotY(), 0,1,0);
+	glRotatef (getRotZ(), 0,0,1);
+	glMultMatrixd (rotMat);
+	glGetDoublev (GL_MODELVIEW_MATRIX, rotMat);
 }
 
 void ObjectBall::resetRotateMatrix()
@@ -385,7 +388,7 @@ void ObjectBall::setQuad()
 	quadricSphere = gluNewQuadric();
 	gluQuadricNormals(quadricSphere, GL_SMOOTH);
 	gluQuadricDrawStyle( quadricSphere, GLU_FILL);
-    gluQuadricOrientation( quadricSphere, GLU_OUTSIDE);
+	gluQuadricOrientation( quadricSphere, GLU_OUTSIDE);
 }
 
 //--------------------------------------------------- POSITION DETECTION
@@ -401,7 +404,7 @@ bool ObjectBall::hasSnooked()
 bool ObjectBall::isInField()
 {
 	if( pos[0]>LEFTBOUND && pos[0]<RIGHTBOUND  &&  
-		pos[2]<TOPBOUND  && pos[2]>BOTBOUND )
+			pos[2]<TOPBOUND  && pos[2]>BOTBOUND )
 		return true;
 	else
 		return false;
@@ -410,10 +413,10 @@ bool ObjectBall::isInField()
 bool ObjectBall::collidedHWall()
 {
 	if( (pos[2] < wallLimits[4][0][1]  &&  pos[2] > wallLimits[4][1][1] &&
-		pos[0] < LEFTBOUND)
-		||
-		(pos[2] < wallLimits[5][0][1]  &&  pos[2] > wallLimits[5][1][1] &&
-		pos[0] > RIGHTBOUND) )
+				pos[0] < LEFTBOUND)
+			||
+			(pos[2] < wallLimits[5][0][1]  &&  pos[2] > wallLimits[5][1][1] &&
+			 pos[0] > RIGHTBOUND) )
 		return true;
 	else
 		return false;
@@ -422,16 +425,16 @@ bool ObjectBall::collidedHWall()
 bool ObjectBall::collidedVWall()
 {
 	if( (pos[0] > wallLimits[0][0][0]  &&  pos[0] < wallLimits[0][1][0] &&
-		pos[2] > TOPBOUND)
-		||
-		(pos[0] > wallLimits[1][0][0]  &&  pos[0] < wallLimits[1][1][0] &&
-		pos[2] > TOPBOUND) 
-		||
-		(pos[0] > wallLimits[2][0][0]  &&  pos[0] < wallLimits[2][1][0] &&
-		pos[2] < BOTBOUND) 
-		||
-		(pos[0] > wallLimits[3][0][0]  &&  pos[0] < wallLimits[3][1][0] &&
-		pos[2] < BOTBOUND) )
+				pos[2] > TOPBOUND)
+			||
+			(pos[0] > wallLimits[1][0][0]  &&  pos[0] < wallLimits[1][1][0] &&
+			 pos[2] > TOPBOUND) 
+			||
+			(pos[0] > wallLimits[2][0][0]  &&  pos[0] < wallLimits[2][1][0] &&
+			 pos[2] < BOTBOUND) 
+			||
+			(pos[0] > wallLimits[3][0][0]  &&  pos[0] < wallLimits[3][1][0] &&
+			 pos[2] < BOTBOUND) )
 		return true;
 	else
 		return false;
