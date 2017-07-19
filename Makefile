@@ -1,20 +1,21 @@
 CC = g++
+INCLUDE = -I.
 
 FLAGS = -Wall
 
-OBJS =  ObjectModel.o Object.o ObjectStick.o ObjectBall.o Material.o LightInfo.o Level.o Camera.o Game.o utils.o
+OBJS =  src/ObjectModel.o src/Object.o src/ObjectStick.o src/ObjectBall.o src/Material.o src/LightInfo.o src/Level.o src/Camera.o src/Game.o src/utils.o
 OBJLIB = lib/glm.o lib/imageloader.o lib/Texture.o
 
 LIBS = -lGL -lglut -lGLU
 
 BIN = sinos
 
-%.o: %.cpp %.h
-	$(CC) $(FLAGS) -c $< -o $@ $(FLAGS) $(LIBS) -g
+src/%.o: src/%.cpp src/%.h
+	$(CC) $(FLAGS) -c $< -o $@ $(INCLUDE) $(LIBS) -g
 
 
-all: opengl.cpp $(OBJS) $(OBJLIB)
-	$(CC) $(FLAGS) $^ -o $(BIN) $(FLAGS) $(LIBS) -g
+all: src/opengl.cpp $(OBJS) $(OBJLIB)
+	$(CC) $(FLAGS) $^ -o $(BIN) $(INCLUDE) $(LIBS) -g
 
 
 clean:
